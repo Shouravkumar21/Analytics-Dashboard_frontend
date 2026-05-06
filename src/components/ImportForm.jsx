@@ -23,7 +23,7 @@ const ImportForm = () => {
     setUploading(true);
     const toastId = toast.loading('Uploading and processing data...');
     try {
-      await axios.post('http://localhost:5001/api/import', formData, {
+      await axios.post('https://analytics-dashboard-kk32.onrender.com/api/import', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       toast.success('Data imported successfully!', { id: toastId });
