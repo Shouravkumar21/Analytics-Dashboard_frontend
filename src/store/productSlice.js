@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_BASE = 'https://analytics-dashboard-kk32.onrender.com/api';
+const API_BASE = 'http://localhost:5001/api';
 
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
@@ -17,6 +17,14 @@ export const fetchStats = createAsyncThunk(
   'products/fetchStats',
   async () => {
     const response = await axios.get(`${API_BASE}/stats`);
+    return response.data;
+  }
+);
+
+export const clearProducts = createAsyncThunk(
+  'products/clearProducts',
+  async () => {
+    const response = await axios.delete(`${API_BASE}/products/clear`);
     return response.data;
   }
 );

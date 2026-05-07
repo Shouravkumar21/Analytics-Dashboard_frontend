@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { 
   Container, Grid, Typography, Box, Paper, TextField, 
   MenuItem, Select, FormControl, InputLabel, AppBar, Toolbar,
-  Card, CardContent, IconButton, InputAdornment
+  Card, CardContent, IconButton, InputAdornment, Button
 } from '@mui/material';
 import { 
   Analytics as AnalyticsIcon, 
@@ -13,10 +13,12 @@ import {
   Category as CategoryIcon,
   Star as StarIcon
 } from '@mui/icons-material';
-import { fetchProducts, fetchStats, setPage } from '../store/productSlice';
+import { fetchProducts, fetchStats, setPage, clearProducts } from '../store/productSlice';
 import ProductTable from './ProductTable';
 import Charts from './Charts';
 import ImportForm from './ImportForm';
+import toast from 'react-hot-toast';
+import { Delete as DeleteIcon } from '@mui/icons-material';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -24,6 +26,19 @@ const Dashboard = () => {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [minReview, setMinReview] = useState(0);
+
+  const handleDeleteAll = async () => {
+    if (window.confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+      try {
+        await dispatch(clearProducts()).unwrap();
+        toast.success('All data cleared successfully');
+        dispatch(fetchProducts({ page: 1, limit: 10 }));
+        dispatch(fetchStats());
+      } catch (err) {
+        toast.error('Failed to clear data');
+      }
+    }
+  };
 
   useEffect(() => {
     // Debounce search slightly
@@ -56,7 +71,18 @@ const Dashboard = () => {
           <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: 'text.primary' }}>
             Analytics Dashboard
           </Typography>
-          <ImportForm />
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button 
+              variant="outlined" 
+              color="error" 
+              startIcon={<DeleteIcon />} 
+              onClick={handleDeleteAll}
+              sx={{ borderRadius: '8px' }}
+            >
+              Reset Data
+            </Button>
+            <ImportForm />
+          </Box>
         </Toolbar>
       </AppBar>
 
